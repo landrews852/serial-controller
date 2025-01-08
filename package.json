@@ -9,7 +9,7 @@
     "electron:dev": "tsc -p tsconfig.electron.json && mv dist/electron.js dist/electron.cjs && wait-on http://localhost:5173 && electron dist/electron.cjs",
     "build": "vite build && tsc -p tsconfig.electron.json && mv dist/electron.js dist/electron.cjs",
     "start": "electron dist/electron.cjs",
-    "package": "npm run build && electron-builder"
+    "package": "yarn build && electron-builder"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -47,14 +47,15 @@
       "buildResources": "assets"
     },
     "win": {
-      "target": "nsis",
-      "arch": [
-        "x64",
-        "ia32"
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
       ]
-    },
-    "mac": {
-      "target": "dmg"
     }
   }
 }
