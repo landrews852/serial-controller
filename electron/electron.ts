@@ -40,40 +40,55 @@ ipcMain.handle('list-serial-ports', async () => {
 });
 
 // Manejo de IPC para abrir un puerto serial
-ipcMain.handle('open-serial-port', async (_event, portPath: string, options: { baudRate: number; dataBits?: number; stopBits?: number; parity?: string; }) => {
-  try {
-    if (currentPort?.isOpen) {
-      currentPort.close();
+ipcMain.handle(
+  "open-serial-port",
+  async (
+    _event,
+    portPath: string,
+    options: {
+      baudRate: number;
+      dataBits?: 5 | 6 | 7 | 8;
+      stopBits?: 1 | 1.5 | 2;
+      parity?: "none" | "even" | "odd";
     }
+  ) => {
+    try {
+      if (currentPort?.isOpen) {
+        currentPort.close();
+      }
 
-    currentPort = new SerialPort({ path: portPath, ...options });
+      currentPort = new SerialPort({ path: portPath, ...options });
 
-    currentPort.on('open', () => {
-      mainWindow?.webContents.send('serial-status', `Conectado a ${portPath}`);
-    });
+      currentPort.on("open", () => {
+        mainWindow?.webContents.send(
+          "serial-status",
+          `Conectado a ${portPath}`
+        );
+      });
 
-    currentPort.on('data', (data: Buffer) => {
-      // Aquí conviertes Buffer a string
-      const tecla = data.toString().trim();
-      mainWindow?.webContents.send('serial-data', tecla);
-    });
+      currentPort.on("data", (data: Buffer) => {
+        // Aquí conviertes Buffer a string
+        const tecla = data.toString().trim();
+        mainWindow?.webContents.send("serial-data", tecla);
+      });
 
-    currentPort.on('error', (err: Error) => {
-      mainWindow?.webContents.send('serial-status', `Error: ${err.message}`);
-    });
+      currentPort.on("error", (err: Error) => {
+        mainWindow?.webContents.send("serial-status", `Error: ${err.message}`);
+      });
 
-    currentPort.on('close', () => {
-      mainWindow?.webContents.send('serial-status', 'Puerto cerrado');
-    });
+      currentPort.on("close", () => {
+        mainWindow?.webContents.send("serial-status", "Puerto cerrado");
+      });
 
-    return { success: true };
-  } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : String(error),
-    };
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
   }
-});
+);
 
 // Manejo de IPC para cerrar el puerto serial
 ipcMain.handle('close-serial-port', async () => {

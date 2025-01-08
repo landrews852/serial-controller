@@ -1,20 +1,27 @@
 // preload.js
 import { contextBridge, ipcRenderer } from "electron";
 
-contextBridge.exposeInMainWorld('serialAPI', {
-  listSerialPorts: () => ipcRenderer.invoke('list-serial-ports'),
-  openSerialPort: (portPath, options) =>
-    ipcRenderer.invoke('open-serial-port', portPath, options),
-  closeSerialPort: () => ipcRenderer.invoke('close-serial-port'),
+contextBridge.exposeInMainWorld("serialAPI", {
+  listSerialPorts: () => ipcRenderer.invoke("list-serial-ports"),
+  openSerialPort: (
+    portPath: string,
+    options: {
+      baudRate?: number;
+      dataBits?: number;
+      stopBits?: number;
+      parity?: "none" | "even" | "odd";
+    }
+  ) => ipcRenderer.invoke("open-serial-port", portPath, options),
+  closeSerialPort: () => ipcRenderer.invoke("close-serial-port"),
   onData: (callback: (data: string) => void) =>
-    ipcRenderer.on('serial-data', (_event, data) => callback(data)),
+    ipcRenderer.on("serial-data", (_event, data) => callback(data)),
   onStatus: (callback: (status: string) => void) =>
-    ipcRenderer.on('serial-status', (_event, status) => callback(status)),
+    ipcRenderer.on("serial-status", (_event, status) => callback(status)),
 });
 
-contextBridge.exposeInMainWorld('keyboardAPI', {
-  onKeyPress: (callback: (event) => void) =>
-    ipcRenderer.on('keyboard-event', (_event, data) => callback(data)),
+contextBridge.exposeInMainWorld("keyboardAPI", {
+  onKeyPress: (callback: (event: KeyboardEvent) => void) =>
+    ipcRenderer.on("keyboard-event", (_event, data) => callback(data)),
 });
 
 // Explicación:

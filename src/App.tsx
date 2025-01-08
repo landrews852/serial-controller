@@ -1,6 +1,7 @@
 // src/App.tsx
 import { useEffect, useState } from 'react';
 import type { IpcRendererEvent } from 'electron';
+import HomeSerialController from './components/Home';
 
 declare global {
   interface Window {
@@ -12,30 +13,22 @@ declare global {
 }
 
 function App() {
-  const [message, setMessage] = useState('');
-  const [reply, setReply] = useState('');
+  // const [message, setMessage] = useState('');
+  // const [reply, setReply] = useState('');
 
-  const sendMessage = () => {
-    window.electronAPI.sendMessage(message);
-  };
+  // const sendMessage = () => {
+  //   window.electronAPI.sendMessage(message);
+  // };
 
-  useEffect(() => {
-    window.electronAPI.receiveMessage((_event, response: string) => {
-      setReply(response);
-    });
-  }, []);
+  // useEffect(() => {
+  //   window.electronAPI.receiveMessage((_event, response: string) => {
+  //     setReply(response);
+  //   });
+  // }, []);
 
   return (
     <div className="App">
-      <h1>Electron + React + Vite + TypeScript</h1>
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Escribe un mensaje"
-      />
-      <button type="button" onClick={sendMessage}>Enviar</button>
-      {reply && <p>Respuesta: {reply}</p>}
+      <HomeSerialController />
     </div>
   );
 }
